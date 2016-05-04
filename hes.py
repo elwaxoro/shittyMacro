@@ -32,6 +32,10 @@ selected = [methodset[i] for i in selected_indexes]
 comparators = "\n            && ".join(
     "Objects.equals({0}(), other.{0}())".format(m) for m in selected)
 hashparams = ", ".join("{0}()".format(m) for m in selected)
+if len(selected) >= 2:
+    hasher = "Objects.hash({})".format(hashparams)
+else:
+    hasher = "Objects.hashCode({})".format(hashparams)
 result = u"""
     @Override
     public boolean equals(Object obj) {{
@@ -45,7 +49,7 @@ result = u"""
 
     @Override
     public int hashCode() {{
-        return Objects.hash({hashparams});
+        return {hasher};
     }}""".format(comparators=comparators, hashparams=hashparams, classname=classname)
 
 # Output
